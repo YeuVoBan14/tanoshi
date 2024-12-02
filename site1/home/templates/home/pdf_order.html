@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice {{ order.id }}</title>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Order #{{ order.code }}</h1>
+            <p>Created date: {{ order.created }}</p>
+        </div>
+
+        <table border="1" cellpadding="10" cellspacing="0">
+            <tr>
+                <th>Customer</th>
+                <td>{{ order.customer }}</td>
+            </tr>
+            <tr>
+                <th>Employee</th>
+                <td>{{ order.employee }}</td>
+            </tr>
+            <tr>
+                <th>Complete Expectation</th>
+                <td>{{ order.complete_expect }}</td>
+            </tr>
+            <tr>
+                <th>Note</th>
+                <td>{{ order.note }}</td>
+            </tr>
+            <tr>
+                <th>Quantity</th>
+                <td>{{ order.quantity }}</td>
+            </tr>
+            <tr>
+                <th>Size</th>
+                <td>{{ order.size }}</td>
+            </tr>
+            <tr>
+                <th>Image</th>
+                <td>
+                    <p>{{ order.image.url }}</p>
+                </td>
+            </tr>
+        </table>
+
+        <div class="footer">
+        </div>
+    </div>
+</body>
+</html>

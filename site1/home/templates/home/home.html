@@ -1,0 +1,274 @@
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    </head>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Oswald:wght@200..700&display=swap');
+        *{
+            margin: 0;
+            padding: 0;
+            font-family: 'Oswald', sans-serif;
+        }
+        .cus-input{
+            width: 80%;
+            padding: 5px;
+        }
+        .cus-check-input {
+            -webkit-appearance: none; /* Tắt giao diện mặc định của radio */
+            -moz-appearance: none;
+            appearance: none;
+            width: 25px;
+            height: 25px;
+            border: 2px solid #000; /* Màu sắc của viền */
+            border-radius: 5px; /* Đổi thành ô vuông */
+            background-color: white;
+            position: relative;
+            cursor: pointer;
+        }
+
+        /* Khi radio button được chọn */
+        .cus-check-input:checked {
+            background-color: #007bff; /* Màu nền khi chọn */
+            border-color: #0056b3; /* Đổi màu viền khi chọn */
+        }
+
+        /* Tạo dấu tích và căn giữa trong ô vuông */
+        .cus-check-input:checked::before {
+            content: "✔"; /* Ký tự check */
+            font-size: 14px; /* Kích thước của dấu check */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%); /* Căn giữa dấu check */
+            color: white; /* Màu sắc của dấu check */
+        }
+        .toast-notification {
+        position: fixed;
+        top: 130px;
+        right: -300px;
+        width: 280px;
+        background-color: #fff;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        display: flex;
+        align-items: center;
+        transition: right 0.3s ease-in-out;
+        z-index: 1000;
+    }
+    
+    .toast-notification.show {
+        right: 20px;
+    }
+    
+    .toast-content {
+        flex: 1;
+    }
+    
+    .toast-icon {
+        margin-right: 12px;
+        background-color: #4CAF50;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+    }
+    
+    .toast-message {
+        margin: 0;
+        color: #333;
+        font-size: 14px;
+    }
+    
+    .progress-bar {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 4px;
+        width: 100%;
+        background-color: #f0f0f0;
+        border-radius: 0 0 8px 8px;
+        overflow: hidden;
+    }
+    
+    .progress {
+        height: 100%;
+        width: 100%;
+        background-color: #4CAF50;
+        transition: width 5s linear;
+    }
+    
+    .progress.active {
+        width: 0;
+    }
+    </style>
+    <body>
+        <div class="container-fluid">
+            <div class="row text-uppercase">
+                <div class="col-md-6 py-4 d-flex align-items-center justify-content-center">
+                    <h1 style="color: #214774">Logo</h1>
+                </div>
+                <div class="col-md-6 py-4 d-flex align-items-center justify-content-center" style="background-color: #ee4723;">
+                    <h2 class="text-white">Tạo đơn hàng</h2>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-md-6 p-3 d-flex align-items-center justify-content-center">
+                    <img style="border: 2px solid #000;" class="img-fluid" src="/media/home.png" alt="">
+                </div>
+                <div class="col-md-6 p-3">
+                    <h2 class="text-uppercase mb-4">
+                        Phòng kinh doanh TP.HCM
+                    </h2>
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <div class="row mb-2">
+                                <div class="col-md-3">
+                                    <label for="employee" class="form-label">Nhân Viên</label>
+                                </div>
+                                <div class="col-md-9">
+                                    <input type="text" class="cus-input" id="employee" name="employee">
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-md-3">
+                                    <label for="customer" class="form-label me-3">Khách Hàng</label>
+                                </div>
+                                <div class="col-md-9">
+                                    <input type="text" class="cus-input" id="customer" name="customer">
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-md-3">
+                                    <label for="complete_expect" class="form-label">Ngày Dự Kiến Hoàn Thành</label>
+                                </div>
+                                <div class="col-md-9">
+                                    <input type="datetime-local" class="cus-input" id="complete_expect" name="complete_expect">
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-md-3">
+                                    <label for="color" class="form-label">Màu Sắc</label>
+                                </div>
+                                <div class="col-md-9">
+                                    <input type="color" class="form-control form-control-color" id="color" name="color" value="#0D6EFD">
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-md-3">
+                                    <label for="quantity" class="form-label">Số Lượng</label>
+                                </div>
+                                <div class="col-md-9">
+                                    <input type="number" class="cus-input" id="quantity" name="quantity" min="0">
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-md-3">
+                                    <label for="image" class="form-label">Hình Ảnh</label>
+                                </div>
+                                <div class="col-md-9">
+                                    <input type="file" class="cus-input" id="image" name="image">
+                                </div>
+                            </div>
+                            <div class="row mb-4">
+                                <div class="col d-flex flex-column justify-content-center align-items-center">
+                                    <span>XS</span>
+                                    <input class="cus-check-input" type="radio" id="size-xs" name="size" value="XS">
+                                </div>
+                                <div class="col d-flex flex-column justify-content-center align-items-center">
+                                    <span>S</span>
+                                    <input class="cus-check-input" type="radio" id="size-s" name="size" value="S">
+                                </div>
+                                <div class="col d-flex flex-column justify-content-center align-items-center">
+                                    <span>M</span>
+                                    <input class="cus-check-input" type="radio" id="size-m" name="size" value="M">
+                                </div>
+                                <div class="col d-flex flex-column justify-content-center align-items-center">
+                                    <span>L</span>
+                                    <input class="cus-check-input" type="radio" id="size-l" name="size" value="L">
+                                </div>
+                                <div class="col d-flex flex-column justify-content-center align-items-center">
+                                    <span>XL</span>
+                                    <input class="cus-check-input" type="radio" id="size-xl" name="size" value="XL">
+                                </div>
+                                <div class="col d-flex flex-column justify-content-center align-items-center">
+                                    <span>2XL</span>
+                                    <input class="cus-check-input" type="radio" id="size-2xl" name="size" value="2XL">
+                                </div>
+                                <div class="col d-flex flex-column justify-content-center align-items-center">
+                                    <span>3XL</span>
+                                    <input class="cus-check-input" type="radio" id="size-3xl" name="size" value="3XL">
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                <div for="note" class="form-label">Ghi Chú:</div>
+                                <textarea class="cus-input" id="note" name="note" rows="3"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Tạo Đơn Hàng</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <script>
+            function showToast(message) {
+                // Tạo phần tử toast
+                const toast = document.createElement('div');
+                toast.classList.add('toast-notification', 'show');
+        
+                // Tạo phần nội dung của toast
+                const toastContent = document.createElement('div');
+                toastContent.classList.add('toast-content');
+                toastContent.innerHTML = `<p class="toast-message">${message}</p>`;
+        
+                // Tạo phần icon cho toast
+                const toastIcon = document.createElement('div');
+                toastIcon.classList.add('toast-icon');
+                toastIcon.innerHTML = '✔';
+        
+                // Tạo progress bar
+                const progressBar = document.createElement('div');
+                progressBar.classList.add('progress-bar');
+                const progress = document.createElement('div');
+                progress.classList.add('progress');
+                progressBar.appendChild(progress);
+        
+                // Thêm icon và nội dung vào toast
+                toast.appendChild(toastIcon);
+                toast.appendChild(toastContent);
+                toast.appendChild(progressBar);
+        
+                // Thêm toast vào body
+                document.body.appendChild(toast);
+        
+                setTimeout(function() {
+                    toast.classList.remove('show');
+                    setTimeout(function() {
+                        toast.remove();
+                    }, 300);
+                }, 5000);
+            }
+        </script>
+        <script>
+            {% if messages %}
+                {% for message in messages %}
+                    // Gọi hàm để hiển thị thông báo
+                    showToast("{{ message }}");
+                {% endfor %}
+            {% endif %}
+        </script>     
+        <script src="" async defer></script>
+    </body>
+</html>
