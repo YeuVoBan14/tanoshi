@@ -18,37 +18,8 @@
             font-family: 'Oswald', sans-serif;
         }
         .cus-input{
-            width: 80%;
+            width: 100%;
             padding: 5px;
-        }
-        .cus-check-input {
-            -webkit-appearance: none; /* Tắt giao diện mặc định của radio */
-            -moz-appearance: none;
-            appearance: none;
-            width: 25px;
-            height: 25px;
-            border: 2px solid #000; /* Màu sắc của viền */
-            border-radius: 5px; /* Đổi thành ô vuông */
-            background-color: white;
-            position: relative;
-            cursor: pointer;
-        }
-
-        /* Khi radio button được chọn */
-        .cus-check-input:checked {
-            background-color: #007bff; /* Màu nền khi chọn */
-            border-color: #0056b3; /* Đổi màu viền khi chọn */
-        }
-
-        /* Tạo dấu tích và căn giữa trong ô vuông */
-        .cus-check-input:checked::before {
-            content: "✔"; /* Ký tự check */
-            font-size: 14px; /* Kích thước của dấu check */
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%); /* Căn giữa dấu check */
-            color: white; /* Màu sắc của dấu check */
         }
         .toast-notification {
         position: fixed;
@@ -112,6 +83,31 @@
     .progress.active {
         width: 0;
     }
+    .custom-size-input {
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    border-radius: 5px;
+    -webkit-appearance: none;  /* Dành cho Chrome/Safari */
+    -moz-appearance: textfield;  /* Dành cho Firefox */
+    }
+
+    .custom-size-input::-webkit-outer-spin-button, 
+    .custom-size-input::-webkit-inner-spin-button {
+        -webkit-appearance: none;  /* Loại bỏ mũi tên trong Chrome, Safari */
+        margin: 0;  /* Xoá khoảng cách */
+    }
+
+    .custom-size-input[type="number"] {
+        -moz-appearance: textfield;  /* Loại bỏ mũi tên trong Firefox */
+    }
+    #image {
+        display: none;  /* Ẩn nút file mặc định */
+    }
+    #image-label {
+        display: inline-block;
+        cursor: pointer;
+    }
     </style>
     <body>
         <div class="container-fluid">
@@ -123,104 +119,123 @@
                     <h2 class="text-white">Tạo đơn hàng</h2>
                 </div>
             </div>
-            <div class="row mt-4">
-                <div class="col-md-6 p-3 d-flex align-items-center justify-content-center">
-                    <img style="border: 2px solid #000;" class="img-fluid" src="/media/home.png" alt="">
-                </div>
-                <div class="col-md-6 p-3">
-                    <h2 class="text-uppercase mb-4">
-                        Phòng kinh doanh TP.HCM
-                    </h2>
-                    <form method="POST" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <div class="row mb-2">
-                                <div class="col-md-3">
-                                    <label for="employee" class="form-label">Nhân Viên</label>
-                                </div>
-                                <div class="col-md-9">
-                                    <input type="text" class="cus-input" id="employee" name="employee">
-                                </div>
-                            </div>
-                            <div class="row mb-2">
-                                <div class="col-md-3">
-                                    <label for="customer" class="form-label me-3">Khách Hàng</label>
-                                </div>
-                                <div class="col-md-9">
-                                    <input type="text" class="cus-input" id="customer" name="customer">
-                                </div>
-                            </div>
-                            <div class="row mb-2">
-                                <div class="col-md-3">
-                                    <label for="complete_expect" class="form-label">Ngày Dự Kiến Hoàn Thành</label>
-                                </div>
-                                <div class="col-md-9">
-                                    <input type="datetime-local" class="cus-input" id="complete_expect" name="complete_expect">
-                                </div>
-                            </div>
-                            <div class="row mb-2">
-                                <div class="col-md-3">
-                                    <label for="color" class="form-label">Màu Sắc</label>
-                                </div>
-                                <div class="col-md-9">
-                                    <input type="color" class="form-control form-control-color" id="color" name="color" value="#0D6EFD">
-                                </div>
-                            </div>
-                            <div class="row mb-2">
-                                <div class="col-md-3">
-                                    <label for="quantity" class="form-label">Số Lượng</label>
-                                </div>
-                                <div class="col-md-9">
-                                    <input type="number" class="cus-input" id="quantity" name="quantity" min="0">
-                                </div>
-                            </div>
-                            <div class="row mb-2">
-                                <div class="col-md-3">
-                                    <label for="image" class="form-label">Hình Ảnh</label>
-                                </div>
-                                <div class="col-md-9">
-                                    <input type="file" class="cus-input" id="image" name="image">
-                                </div>
-                            </div>
-                            <div class="row mb-4">
-                                <div class="col d-flex flex-column justify-content-center align-items-center">
-                                    <span>XS</span>
-                                    <input class="cus-check-input" type="radio" id="size-xs" name="size" value="XS">
-                                </div>
-                                <div class="col d-flex flex-column justify-content-center align-items-center">
-                                    <span>S</span>
-                                    <input class="cus-check-input" type="radio" id="size-s" name="size" value="S">
-                                </div>
-                                <div class="col d-flex flex-column justify-content-center align-items-center">
-                                    <span>M</span>
-                                    <input class="cus-check-input" type="radio" id="size-m" name="size" value="M">
-                                </div>
-                                <div class="col d-flex flex-column justify-content-center align-items-center">
-                                    <span>L</span>
-                                    <input class="cus-check-input" type="radio" id="size-l" name="size" value="L">
-                                </div>
-                                <div class="col d-flex flex-column justify-content-center align-items-center">
-                                    <span>XL</span>
-                                    <input class="cus-check-input" type="radio" id="size-xl" name="size" value="XL">
-                                </div>
-                                <div class="col d-flex flex-column justify-content-center align-items-center">
-                                    <span>2XL</span>
-                                    <input class="cus-check-input" type="radio" id="size-2xl" name="size" value="2XL">
-                                </div>
-                                <div class="col d-flex flex-column justify-content-center align-items-center">
-                                    <span>3XL</span>
-                                    <input class="cus-check-input" type="radio" id="size-3xl" name="size" value="3XL">
-                                </div>
-                            </div>
-                            <div class="mb-2">
-                                <div for="note" class="form-label">Ghi Chú:</div>
-                                <textarea class="cus-input" id="note" name="note" rows="3"></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Tạo Đơn Hàng</button>
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row mt-4">
+                    <div class="col-md-6 p-3 d-flex align-items-center justify-content-center">
+                        <div class="row mb-2">
+                            <label for="image" class="btn btn-primary" id="image-label">Tải ảnh lên</label>
+                            <input type="file" class="cus-input" id="image" name="image" accept="image/*" onchange="previewImage(event)">
+                            <img id="preview-img" src="#" alt="Image preview" width="200" style="display:none; border-radius: 10px;">
                         </div>
-                    </form>
+                    </div>
+                    <div class="col-md-6 p-3">
+                        <h2 class="text-uppercase mb-4">
+                            Phòng kinh doanh TP.HCM
+                        </h2>
+                            <div class="mb-3">
+                                <div class="row mb-2">
+                                    <div class="col-md-3">
+                                        <label for="employee" class="form-label">Nhân Viên</label>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <input type="text" class="cus-input" id="employee" name="employee">
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-3">
+                                        <label for="customer" class="form-label me-3">Khách Hàng</label>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <input type="text" class="cus-input" id="customer" name="customer">
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-3">
+                                        <label for="created-date" class="form-label me-3">Ngày tạo đơn</label>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <input type="date" class="cus-input" id="created-date" name="created-date">
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-3">
+                                        <label for="complete_expect" class="form-label">Ngày Dự Kiến Hoàn Thành</label>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <input type="datetime-local" class="cus-input" id="complete_expect" name="complete_expect">
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-3">
+                                        <label for="image" class="form-label">Hình Ảnh</label>
+                                    </div>
+                                    <div class="col-md-9">
+                                        
+                                    </div>
+                                </div>
+                                <div class="d-flex mb-2">
+                                    <div class="me-2">
+                                        Mã sản phẩm
+                                    </div>
+                                    <div id="code-display" class="w-50 p-1">
+                                        
+                                    </div>
+                                </div>
+                                <div class="row px-2">
+                                    <div class="col-md-6">
+                                        <div class="row mb-2">
+                                            <div class="col-md-3 fw-semibold text-white d-flex align-items-center justify-content-center" style="background-color: black;">
+                                                <span class="text-nowrap">Mã SP</span>
+                                            </div>
+                                            <div class="col-md-9" style="padding: 0 !important;">
+                                                <input type="text" class="cus-input" id="code" name="code">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="row mb-2">
+                                            <div class="col-md-3 fw-semibold text-white d-flex align-items-center justify-content-center" style="background-color: black;">
+                                                <span class="text-nowrap">Màu sắc</span>
+                                            </div>
+                                            <div class="col-md-9" style="padding: 0 !important;">
+                                                <input type="text" class="cus-input" id="color" name="color">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mb-2">
+                                    <div class="col-md-3">
+                                        <label for="quantity" class="form-label">Số lượng: </label>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <input type="number" id="quantity" class="border-0" name="quantity" min="0" readonly>
+                                    </input>
+                                </div>
+                                <div class="d-flex mb-2">
+                                {% for size in sizes %}
+                                    <div class="me-2">
+                                        <div class="d-flex flex-column justify-content-center align-items-center">
+                                            <span>{{ size }}</span>
+                                            <input class="custom-size-input" type="number" name="note_size[]" min="0" value="0" inputmode="numeric" pattern="[0-9]*">
+                                        </div> 
+                                    </div>
+                                {% endfor %}
+                                </div>
+                                <div class="mb-2">
+                                    <div for="note" class="form-label">Ghi Chú:</div>
+                                    <textarea class="cus-input" id="note" name="note" rows="3"></textarea>
+                                </div>
+                                <div class="d-flex justify-content-end">
+                                    <button type="submit" class="btn btn-danger">In bill</button>
+                                </div>
+                                
+                            </div>
+                        
+                    </div>
                 </div>
-            </div>
+            </form>
         </div>
         <script>
             function showToast(message) {
@@ -268,7 +283,63 @@
                     showToast("{{ message }}");
                 {% endfor %}
             {% endif %}
-        </script>     
+        </script>
+        <script>
+            const sizeInputs = document.querySelectorAll('input[name="note_size[]"]');
+            const totalQuantityInput = document.getElementById('quantity');
+            const form = document.querySelector('form');
+
+            function calculateTotalQuantity() {
+                let totalQuantity = 0;
+                sizeInputs.forEach((input) => {
+                    totalQuantity += parseInt(input.value, 10) || 0;
+                });
+                totalQuantityInput.value = totalQuantity;
+            }
+
+            // Tính tổng khi có sự thay đổi trong input size
+            sizeInputs.forEach((input) => {
+                input.addEventListener('input', calculateTotalQuantity);
+            });
+
+            // Tính tổng khi trang được tải lên
+            calculateTotalQuantity();
+
+            // Cập nhật lại quantity khi form được submit
+            form.addEventListener('submit', function() {
+                calculateTotalQuantity();  // Cập nhật giá trị quantity trước khi submit
+            });
+        </script>
+        <script>
+            document.getElementById('code').addEventListener('input', function() {
+                var codeValue = this.value;  // Lấy giá trị từ ô input code
+                document.getElementById('code-display').innerText = codeValue;  // Cập nhật giá trị vào #code-display
+            });
+        </script>
+        <script>
+            function previewImage(event) {
+                const fileInput = document.getElementById('image-label');
+                const preview = document.getElementById('preview-img');
+                const file = event.target.files[0]; // Lấy file ảnh từ input
+                
+                // Kiểm tra nếu có file ảnh được chọn
+                if (file) {
+                    const reader = new FileReader(); // Khởi tạo FileReader
+                    reader.onload = function(e) {
+                        preview.src = e.target.result; // Gán kết quả đọc ảnh vào thẻ img
+                        preview.style.display = 'block';  // Hiển thị ảnh xem trước
+
+                        // Ẩn input tải ảnh khi đã chọn ảnh
+                        fileInput.style.display = 'none';
+                    };
+                    reader.readAsDataURL(file); // Đọc ảnh dưới dạng URL
+                } else {
+                    // Nếu không có ảnh (tức là người dùng bỏ chọn), ẩn ảnh và hiện lại nút tải
+                    preview.style.display = 'none';
+                    fileInput.style.display = 'block';
+                }
+            }
+        </script>
         <script src="" async defer></script>
     </body>
 </html>

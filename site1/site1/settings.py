@@ -74,12 +74,21 @@ WSGI_APPLICATION = 'site1.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'gjvdbgde_site1',
+#         'USER': 'gjvdbgde_admin',
+#         'PASSWORD': 'admin1401S1',
+#         'HOST': 'localhost',
+#     }
+# }
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'gjvdbgde_site1',
-        'USER': 'gjvdbgde_admin',
-        'PASSWORD': 'admin1401S1',
+        'NAME': 'site1',
+        'USER': 'root',
+        'PASSWORD': '',
         'HOST': 'localhost',
     }
 }
