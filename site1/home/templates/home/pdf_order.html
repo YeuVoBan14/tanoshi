@@ -41,7 +41,9 @@
             <tr>
                 <th>Image</th>
                 <td>
-                    <p>{{ order.image.url }}</p>
+                    {% if order.image and order.image.url %}
+                        <p>{{ order.image.url }}</p>
+                    {% endif %} 
                 </td>
             </tr>
         </table>
