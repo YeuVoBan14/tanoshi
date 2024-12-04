@@ -7,6 +7,9 @@ from io import BytesIO
 from .models import Order
 from datetime import datetime
 
+from django.shortcuts import render, redirect
+from datetime import datetime
+
 def home(request):
     if request.method == 'POST':
         # Lấy thông tin từ form
@@ -26,60 +29,107 @@ def home(request):
         for i, size in enumerate(sizes):
             quantity = note_size[i] if i < len(note_size) else '0'
             size_dict[size] = quantity
-        if created_date:
-            created_date = datetime.strptime(created_date, "%Y-%m-%d").date()
+
+        # Xử lý created_date
+        if not created_date:
+            created_date = datetime.now().date()  # Sử dụng ngày hiện tại nếu không có input
+        else:
+            try:
+                created_date = datetime.strptime(created_date, "%Y-%m-%d").date()
+            except ValueError:
+                messages.error(request, 'Ngày tạo đơn không hợp lệ')
+                return redirect('home')
+
         # Chuyển thành chuỗi với định dạng "XS: 12, S: 10"
         note_size_str = ', '.join([f"{size}: {size_dict[size]}" for size in sizes])
         total_quantity = sum(int(size) for size in note_size if size.isdigit())
-        # Tạo đơn hàng mới
-        order = Order.objects.create(
-            employee=employee,
-            customer=customer,
-            complete_expect=complete_expect,
-            color=color,
-            quantity=total_quantity,
-            note_size=note_size_str,  # Lưu note_size theo định dạng mới
-            note=note,
-            created=created_date,
-            code=code,
-            image=image
-        )
 
-        # Thêm thông báo thành công
-        messages.success(request, 'Đơn hàng đã được tạo thành công!')
+        try:
+            # Tạo đơn hàng mới
+            order = Order.objects.create(
+                employee=employee,
+                customer=customer,
+                complete_expect=complete_expect,
+                color=color,
+                quantity=total_quantity,
+                note_size=note_size_str,
+                note=note,
+                created=created_date,
+                code=code,
+                image=image
+            )
 
-        # Gọi hàm tạo PDF và trả về PDF cho người dùng
-        return generate_order_pdf(request, order.id)
+            # Thêm thông báo thành công
+            messages.success(request, 'Đơn hàng đã được tạo thành công!')
+
+            # Gọi hàm tạo PDF và trả về PDF cho người dùng
+            return generate_order_pdf(request, order.id)
+        except Exception as e:
+            messages.error(request, f'Lỗi khi tạo đơn hàng: {str(e)}')
+            return redirect('home')
 
     return render(request, 'home/home.html', {
         'sizes': ['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL']
     })
 
+from django.conf import settings
+import os
+
+def fetch_resources(uri, rel):
+    """
+    Hàm callback để xử lý đường dẫn tới resources (ảnh)
+    """
+    if uri.startswith("/media/"):
+        return os.path.join(settings.MEDIA_ROOT, uri.replace("/media/", ""))
+    return uri
+
+import pdfkit
+from django.template.loader import render_to_string
+from django.http import HttpResponse
+import os
 
 def generate_order_pdf(request, order_id):
     try:
-        # Lấy đơn hàng từ ID
         order = Order.objects.get(id=order_id)
+        
+        # Xử lý note_size thành dictionary
+        size_dict = {}
+        if order.note_size:
+            size_pairs = order.note_size.split(', ')
+            for pair in size_pairs:
+                if ': ' in pair:
+                    size, value = pair.split(': ')
+                    size_dict[size] = value
+
+        context = {
+            'order': order,
+            'size_dict': size_dict,
+            'MEDIA_URL': settings.MEDIA_URL,
+            'BASE_DIR': settings.BASE_DIR,
+        }
+
+        # Render template thành HTML
+        html = render_to_string('home/pdf_order.html', context)
+
+        # Cấu hình cho wkhtmltopdf
+        options = {
+            'page-size': 'A4',
+            'margin-top': '0mm',
+            'margin-right': '0mm',
+            'margin-bottom': '0mm',
+            'margin-left': '0mm',
+            'encoding': 'UTF-8',
+            'no-outline': None,
+            'enable-local-file-access': True
+        }
+
+        # Tạo PDF với pdfkit
+        pdf = pdfkit.from_string(html, False, options=options)
+
+        # Tạo response
+        response = HttpResponse(pdf, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename=Order_{order.code}.pdf'
+        return response
+        
     except Order.DoesNotExist:
         return HttpResponse('Đơn hàng không tồn tại', status=404)
-
-    # Chuẩn bị context với thông tin đơn hàng
-    context = {
-        'order': order,
-    }
-
-    # Render HTML cho PDF
-    html = render_to_string('home/pdf_order.html', context)
-
-    # Tạo đối tượng PDF từ HTML
-    pdf = BytesIO()
-    pisa_status = pisa.pisaDocument(BytesIO(html.encode("UTF-8")), pdf)
-
-    if pisa_status.err:
-        return HttpResponse('Có lỗi khi tạo PDF', status=500)
-
-    # Trả về PDF cho người dùng
-    response = HttpResponse(pdf.getvalue(), content_type='application/pdf')
-    content = f"Order_{order.code}.pdf"
-    response['Content-Disposition'] = f'attachment; filename={content}'
-    return response
