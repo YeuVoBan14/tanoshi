@@ -117,15 +117,9 @@
     }
     </style>
     <body>
-        <div class="container-fluid">
+        <div class="">
             <div class="row text-uppercase">
-                <div class="col-md-6 py-4 d-flex align-items-center justify-content-center">
-                    <h1 style="color: #214774">Logo</h1>
-                </div>
-                <div class="col-md-6 py-4 d-flex align-items-center justify-content-center" style="background-color: #ee4723;">
-                    <h2 class="text-white">Tạo đơn hàng</h2>
-                </div>
-            </div>
+                <img src="/static/images/log.png" alt="Logo">            </div>
             <form method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="row mt-4">
@@ -243,6 +237,7 @@
                     </div>
                 </div>
             </form>
+            <div style="height: 43px; background-color: red; color: #f5f5f5; text-align: center; font-size: 29px;letter-spacing: 2px; font-family: 'Roboto', sans-serif;">*Quý khách vui lòng kiếm tra kĩ thông tin chi tiết đơn hàng để tránh rủi ro ngoài ý muốn.</div>
         </div>
         <script>
             function showToast(message) {

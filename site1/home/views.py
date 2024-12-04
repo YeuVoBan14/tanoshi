@@ -100,12 +100,17 @@ def generate_order_pdf(request, order_id):
                 if ': ' in pair:
                     size, value = pair.split(': ')
                     size_dict[size] = value
+        logo_path = os.path.abspath(os.path.join(settings.STATIC_ROOT, 'images', 'log.png'))
+        logo_path1 = os.path.abspath(os.path.join(settings.STATIC_ROOT, 'images', 'a.png'))
 
         context = {
             'order': order,
             'size_dict': size_dict,
             'MEDIA_URL': settings.MEDIA_URL,
             'BASE_DIR': settings.BASE_DIR,
+            'logo_path': logo_path,
+            'logo_path1': logo_path1,
+
         }
 
         # Render template thành HTML
