@@ -1,0 +1,62 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Danh sách đơn hàng</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .action-btn {
+            padding: 5px 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .pdf-btn {
+            background-color: #f44336;
+        }
+    </style>
+</head>
+<body>
+    <h1>Danh sách đơn hàng</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Mã đơn</th>
+                <th>Khách hàng</th>
+                <th>Nhân viên</th>
+                <th>Ngày tạo</th>
+                <th>Số lượng</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>{{ order.code }}</td>
+                <td>{{ order.customer }}</td>
+                <td>{{ order.employee }}</td>
+                <td>{{ order.created|date:"d/m/Y" }}</td>
+                <td>{{ order.quantity }}</td>
+                <td>
+                    <a href="{% url 'generate_pdf' order.id %}" class="action-btn pdf-btn">Xuất PDF</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

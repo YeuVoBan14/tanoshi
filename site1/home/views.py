@@ -9,7 +9,9 @@ from datetime import datetime
 
 from django.shortcuts import render, redirect
 from datetime import datetime
-
+def order_list(request):
+    orders = Order.objects.all().order_by('-created')
+    return render(request, 'home/order_list.html', {'orders': orders})
 def home(request):
     if request.method == 'POST':
         # Lấy thông tin từ form
@@ -150,3 +152,57 @@ def generate_order_pdf(request, order_id):
         print(f"General error: {str(e)}")
         messages.error(request, f"Error generating PDF: {str(e)}")
         return redirect('home')
+    
+def generate_order_pdf1(request, order_id):
+   try:
+       order = Order.objects.get(id=order_id)
+       
+       # Xử lý note_size thành dictionary
+       size_dict = {}
+       if order.note_size:
+           size_pairs = order.note_size.split(', ')
+           for pair in size_pairs:
+               if ': ' in pair:
+                   size, value = pair.split(': ')
+                   size_dict[size] = value
+
+       logo_path = os.path.abspath(os.path.join(settings.BASE_DIR, 'static', 'images', 'log.png'))
+       logo_path1 = os.path.abspath(os.path.join(settings.BASE_DIR, 'static', 'images', 'a.png'))
+
+       context = {
+           'order': order,
+           'size_dict': size_dict,
+           'logo_path': logo_path,
+           'logo_path1': logo_path1,
+       }
+
+       html = render_to_string('home/pdf_order.html', context)
+
+       options = {
+           'page-size': 'A4', 
+           'margin-top': '0mm',
+           'margin-right': '0mm',
+           'margin-bottom': '0mm',
+           'margin-left': '0mm',
+           'encoding': 'UTF-8',
+           'no-outline': None,
+           'enable-local-file-access': True,
+           'disable-smart-shrinking': True,
+           'quiet': None
+       }
+
+       config = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
+       pdf = pdfkit.from_string(html, False, options=options, configuration=config)
+       
+       response = HttpResponse(pdf, content_type='application/pdf')
+       response['Content-Disposition'] = f'attachment; filename=Order_{order.code}.pdf'
+       return response
+
+   except Exception as e:
+       messages.error(request, f"Error generating PDF: {str(e)}")
+       # Thay vì redirect, trả về file PDF lỗi
+       error_html = "<h1>Error generating PDF</h1><p>" + str(e) + "</p>"
+       pdf = pdfkit.from_string(error_html, False)
+       response = HttpResponse(pdf, content_type='application/pdf') 
+       response['Content-Disposition'] = 'attachment; filename=error.pdf'
+       return response
