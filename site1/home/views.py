@@ -100,23 +100,26 @@ def generate_order_pdf(request, order_id):
                 if ': ' in pair:
                     size, value = pair.split(': ')
                     size_dict[size] = value
+
+        # Sử dụng đường dẫn tuyệt đối cho logo
         logo_path = os.path.abspath(os.path.join(settings.BASE_DIR, 'static', 'images', 'log.png'))
         logo_path1 = os.path.abspath(os.path.join(settings.BASE_DIR, 'static', 'images', 'a.png'))
+
+        # Thêm logging
+        print(f"Logo path: {logo_path}")
+        print(f"Logo exists: {os.path.exists(logo_path)}")
 
         context = {
             'order': order,
             'size_dict': size_dict,
-            'MEDIA_URL': settings.MEDIA_URL,
-            'BASE_DIR': settings.BASE_DIR,
             'logo_path': logo_path,
             'logo_path1': logo_path1,
-
         }
 
         # Render template thành HTML
         html = render_to_string('home/pdf_order.html', context)
 
-        # Cấu hình cho wkhtmltopdf
+        # Cấu hình wkhtmltopdf
         options = {
             'page-size': 'A4',
             'margin-top': '0mm',
@@ -125,16 +128,25 @@ def generate_order_pdf(request, order_id):
             'margin-left': '0mm',
             'encoding': 'UTF-8',
             'no-outline': None,
-            'enable-local-file-access': True
+            'enable-local-file-access': True,
+            'disable-smart-shrinking': True,
+            'quiet': None
         }
 
-        # Tạo PDF với pdfkit
-        pdf = pdfkit.from_string(html, False, options=options)
-
-        # Tạo response
-        response = HttpResponse(pdf, content_type='application/pdf')
-        response['Content-Disposition'] = f'attachment; filename=Order_{order.code}.pdf'
-        return response
+        try:
+            config = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
+            pdf = pdfkit.from_string(html, False, options=options, configuration=config)
+            print("PDF generated successfully")
+            
+            response = HttpResponse(pdf, content_type='application/pdf')
+            response['Content-Disposition'] = f'attachment; filename=Order_{order.code}.pdf'
+            return response
+            
+        except Exception as e:
+            print(f"PDF generation error: {str(e)}")
+            raise
         
-    except Order.DoesNotExist:
-        return HttpResponse('Đơn hàng không tồn tại', status=404)
+    except Exception as e:
+        print(f"General error: {str(e)}")
+        messages.error(request, f"Error generating PDF: {str(e)}")
+        return redirect('home')
