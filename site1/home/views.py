@@ -100,8 +100,8 @@ def generate_order_pdf(request, order_id):
                 if ': ' in pair:
                     size, value = pair.split(': ')
                     size_dict[size] = value
-        logo_path = os.path.abspath(os.path.join(settings.STATIC_ROOT, 'images', 'log.png'))
-        logo_path1 = os.path.abspath(os.path.join(settings.STATIC_ROOT, 'images', 'a.png'))
+        logo_path = os.path.abspath(os.path.join(settings.BASE_DIR, 'static', 'images', 'log.png'))
+        logo_path1 = os.path.abspath(os.path.join(settings.BASE_DIR, 'static', 'images', 'a.png'))
 
         context = {
             'order': order,
