@@ -15,10 +15,12 @@ def order_list(request):
 def home(request):
     if request.method == 'POST':
         # Lấy thông tin từ form
+        stt = request.POST.get('stt')
+        created_date = request.POST.get('created_date')
+        print(created_date)
         employee = request.POST.get('employee')
         customer = request.POST.get('customer')
         complete_expect = request.POST.get('complete_expect') or None
-        created_date = request.POST.get('created-date')
         color = request.POST.get('color', '#0D6EFD')
         note_size = request.POST.getlist('note_size[]')
         note = request.POST.get('note')
@@ -35,12 +37,12 @@ def home(request):
         # Xử lý created_date
         if not created_date:
             created_date = datetime.now().date()  # Sử dụng ngày hiện tại nếu không có input
-        else:
-            try:
-                created_date = datetime.strptime(created_date, "%Y-%m-%d").date()
-            except ValueError:
-                messages.error(request, 'Ngày tạo đơn không hợp lệ')
-                return redirect('home')
+        # else:
+        #     try:
+        #         created_date = datetime.strptime(created_date, "%Y-%m-%d").date()
+        #     except ValueError:
+        #         messages.error(request, 'Ngày tạo đơn không hợp lệ')
+        #         return redirect('home')
 
         # Chuyển thành chuỗi với định dạng "XS: 12, S: 10"
         note_size_str = ', '.join([f"{size}: {size_dict[size]}" for size in sizes])
@@ -49,6 +51,7 @@ def home(request):
         try:
             # Tạo đơn hàng mới
             order = Order.objects.create(
+                stt=stt,
                 employee=employee,
                 customer=customer,
                 complete_expect=complete_expect,
@@ -56,7 +59,7 @@ def home(request):
                 quantity=total_quantity,
                 note_size=note_size_str,
                 note=note,
-                created=created_date,
+                created_date=created_date,
                 code=code,
                 image=image
             )

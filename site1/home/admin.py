@@ -9,7 +9,7 @@ from django.urls import path
 from django.shortcuts import render
 from django.utils.html import format_html
 class OrderItemAdmin(admin.ModelAdmin):
-    list_display = ('code', 'employee', 'customer', 'complete_expect', 'quantity', 'export_pdf_link')
+    list_display =  ( 'stt','code', 'employee', 'customer', 'complete_expect', 'quantity', 'export_pdf_link')
     list_filter = ('employee', 'customer', 'complete_expect')
     search_fields = ('employee', 'customer')
 
